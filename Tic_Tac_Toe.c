@@ -23,7 +23,7 @@ void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
 int check_win(char board[BOARD_SIZE][BOARD_SIZE], char player);
 int check_draw(char board[BOARD_SIZE][BOARD_SIZE]);
 void play_game();
-void player_move(char board[BOARD_SIZE][BOARD_SIZE]);
+void player_move(char board[BOARD_SIZE][BOARD_SIZE], char player);
 void computer_move(char board[BOARD_SIZE][BOARD_SIZE]);
 int is_valid_move(char board[BOARD_SIZE][BOARD_SIZE], int row, int col);
 
@@ -61,26 +61,34 @@ void play_game()
     {
         if (current_player == X)
         {
-            player_move(board);
+            player_move(board, X);
             print_board(board);
             if (check_win(board, current_player))
             {
                 game_score.player_x_score++;
                 print_board(board);
-                printf("Congratulations! You win!\n");
+                printf("Player X wins!\n");
                 break;
             }
             current_player = O;
         }
         else
         {
-            computer_move(board);
+            if (difficulty == 3)
+            {
+                player_move(board, O);
+            }
+
+            else
+            {
+                computer_move(board);
+            }
             print_board(board);
             if (check_win(board, current_player))
             {
                 game_score.computer_score++;
                 print_board(board);
-                printf("Computer wins!\n");
+                printf("Player O wins!\n");
                 break;
             }
             current_player = X;
@@ -101,7 +109,7 @@ int is_valid_move(char board[BOARD_SIZE][BOARD_SIZE], int row, int col)
     return (row < 1 || row > BOARD_SIZE || col < 1 || col > BOARD_SIZE || board[row - 1][col - 1] != ' ');
 }
 
-void player_move(char board[BOARD_SIZE][BOARD_SIZE])
+void player_move(char board[BOARD_SIZE][BOARD_SIZE], char player)
 {
     int count = 0, x, y;
 
@@ -109,16 +117,18 @@ void player_move(char board[BOARD_SIZE][BOARD_SIZE])
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            if(board[i][j] == ' '){
+            if (board[i][j] == ' ')
+            {
                 count++;
                 x = i;
                 y = j;
             }
         }
     }
-    
-    if(count == 1){
-        board[x][y] = X;
+
+    if (count == 1)
+    {
+        board[x][y] = player;
         return;
     }
 
@@ -126,12 +136,12 @@ void player_move(char board[BOARD_SIZE][BOARD_SIZE])
 
     do
     {
-        printf("Player X's Move!\n");
+        printf("Player %c Move!\n", player);
         printf("Enter your move (row and column): ");
         scanf("%d %d", &row, &col);
     } while (is_valid_move(board, row, col));
 
-    board[row - 1][col - 1] = X;
+    board[row - 1][col - 1] = player;
 }
 
 void computer_move(char board[BOARD_SIZE][BOARD_SIZE])
@@ -171,9 +181,11 @@ void computer_move(char board[BOARD_SIZE][BOARD_SIZE])
         }
     }
 
-    if(difficulty == 2){
+    if (difficulty == 2)
+    {
         // 3. Play corner move!
-        if(board[1][1] == ' '){
+        if (board[1][1] == ' ')
+        {
             board[1][1] = O;
             return;
         }
@@ -182,11 +194,12 @@ void computer_move(char board[BOARD_SIZE][BOARD_SIZE])
             {0, 0},
             {0, 2},
             {2, 0},
-            {2, 2}
-        };
+            {2, 2}};
 
-        for(int i = 0; i < 4; i++){
-            if(board[corner[i][0]][corner[i][1]] == ' '){
+        for (int i = 0; i < 4; i++)
+        {
+            if (board[corner[i][0]][corner[i][1]] == ' ')
+            {
                 board[corner[i][0]][corner[i][1]] = O;
                 return;
             }
@@ -285,9 +298,9 @@ void input_difficulty()
         printf("Enter your choice: ");
         scanf("%d", &difficulty);
 
-        if (difficulty != 1 && difficulty != 2)
+        if (difficulty != 1 && difficulty != 2 && difficulty != 3)
         {
-            printf("Invalid choice. Please select 1 or 2.\n");
+            printf("Invalid choice. Please select 1, 2, or 3.\n");
         }
         else
         {
