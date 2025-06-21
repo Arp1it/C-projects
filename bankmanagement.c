@@ -77,7 +77,7 @@ void create_account()
     
     printf("\nEnter your name: ");
     fgets(acc.name, sizeof(acc.name), stdin);
-    int ind = strcspn(acc.name, "\n");
+    int ind = strcspn(acc.name, "\n"); // Find the index of the newline character
     acc.name[ind] = '\0'; // Remove newline character
     printf("Enter your account number: ");
     scanf("%d", &acc.account_number);
